@@ -13,6 +13,10 @@ hand_y = random.randint(0, 1024)
 
 vx, vy = 0, 0
 
+def remove_arrow(index):
+    if index < len(arrows):
+        del arrows[index]
+
 def handle_events():
     global running
     global x, y, hand_x, hand_y, is_following, sprite_col, arrows, current_arrow_index
@@ -39,17 +43,32 @@ while running:
     clear_canvas()
     TUK_ground.draw(TUK_WIDTH // 2, TUK_HEIGHT // 2)
 
-    x += vx * 10
-    y += vy * 10
+    if is_following and len(arrows) > 0:
+        target_x, target_y = arrows[0]
+        dx = target_x - x
+        dy = target_y - y
+        dis = math.sqrt(dx ** 2 + dy ** 2)
 
-    frame = (frame + 1) % 8
+        if dis > 0:
+            vx = dx / dis
+            vy = dy / dis
 
-    if dx < 0:
-        sprite_col = 0
-    else:
-        sprite_col = 1
+        x += vx * 10
+        y += vy * 10
 
-    character.clip_draw(frame * 100, sprite_col * 100, 100, 100, x, y)
+        frame = (frame + 1) % 8
+
+        if dx < 0:
+            sprite_col = 0
+        else:
+            sprite_col = 1
+
+        character.clip_draw(frame * 100, sprite_col * 100, 100, 100, x, y)
+
+        if dis < 10:
+            remove_arrow(0)
+
+        last_arrow_x, last_arrow_y = target_x, target_y
 
     for arrow_x, arrow_y in arrows:
         hand.draw(arrow_x, arrow_y)
