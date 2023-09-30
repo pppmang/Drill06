@@ -38,6 +38,7 @@ frame = 0
 sprite_col = 0
 is_following = False
 arrows = []
+last_arrow_x, last_arrow_y = 0, 0
 
 while running:
     clear_canvas()
@@ -69,6 +70,16 @@ while running:
             remove_arrow(0)
 
         last_arrow_x, last_arrow_y = target_x, target_y
+
+    else :
+        dx = last_arrow_x - x
+        dy = last_arrow_y - y
+        
+        if dx < 0 :
+            sprite_col = 3
+        else :
+            sprite_col = 2
+        character.clip_draw(frame * 100, sprite_col * 100, 100, 100, x, y)
 
     for arrow_x, arrow_y in arrows:
         hand.draw(arrow_x, arrow_y)
